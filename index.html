@@ -1,1 +1,1054 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bizning Xotiralar Albomi ❤️</title>
+
+<!-- ============ FONTS ============ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- ============ TAILWIND ============ -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- ============ FONT AWESOME ============ -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- ============ SWIPER CSS ============ -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream:        '#F3E9D8',
+          warmwhite:    '#FFFBF2',
+          softbrown:    '#7A5C46',
+          deepbrown:    '#4A3527',
+          beige:        '#E7D8BE',
+          pink:         '#F0C6C6',
+          oldpaper:     '#EADFC4',
+          filmdark:     '#241C16',
+        },
+        fontFamily: {
+          display: ['"Playfair Display"', 'serif'],
+          hand:    ['"Caveat"', 'cursive'],
+          body:    ['"Poppins"', 'sans-serif'],
+        },
+      }
+    }
+  }
+</script>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+    background: #241C16;
+    color: #4A3527;
+  }
+
+  /* film grain */
+  #grain {
+    position: fixed; inset: 0; z-index: 9990; pointer-events: none;
+    opacity: .05; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grainMove 1s steps(4) infinite;
+  }
+  @keyframes grainMove {
+    0%,100% { transform: translate(0,0); }
+    25% { transform: translate(-2%,-1%); }
+    50% { transform: translate(1%,2%); }
+    75% { transform: translate(-1%,1%); }
+  }
+
+  /* light leak */
+  .light-leak {
+    position: absolute; inset: 0; pointer-events: none; z-index: 5;
+    background: radial-gradient(circle at 15% 10%, rgba(255,236,196,.35), transparent 45%),
+                radial-gradient(circle at 85% 90%, rgba(240,198,198,.25), transparent 50%);
+    animation: leakDrift 14s ease-in-out infinite alternate;
+  }
+  @keyframes leakDrift {
+    0% { opacity:.6; transform: scale(1) translate(0,0); }
+    100% { opacity:1; transform: scale(1.08) translate(2%,-2%); }
+  }
+
+  /* vignette */
+  .vignette::after {
+    content:''; position:absolute; inset:0; pointer-events:none; z-index: 6;
+    box-shadow: inset 0 0 18vw rgba(36,28,22,.55);
+  }
+
+  /* glass */
+  .glass {
+    background: rgba(255,251,242,.45);
+    backdrop-filter: blur(14px) saturate(120%);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+    border: 1px solid rgba(255,255,255,.4);
+    box-shadow: 0 8px 32px rgba(74,53,39,.18);
+  }
+  .glass-dark {
+    background: rgba(36,28,22,.4);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,.12);
+  }
+
+  /* ========== LAYER SYSTEM ========== */
+  .layer {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100dvh; /* dynamic viewport height */
+    overflow-y: auto;
+    overflow-x: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.9s cubic-bezier(.4,0,.2,1), transform 0.9s cubic-bezier(.4,0,.2,1);
+    transform: scale(1.03);
+    z-index: 0;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .layer::-webkit-scrollbar { display: none; }
+
+  .layer.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+    z-index: 20;
+  }
+
+  /* entrance animations — triggered by .active */
+  .layer .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .layer.active .reveal {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .layer.active .reveal.d1 { transition-delay: 0.1s; }
+  .layer.active .reveal.d2 { transition-delay: 0.25s; }
+  .layer.active .reveal.d3 { transition-delay: 0.4s; }
+  .layer.active .reveal.d4 { transition-delay: 0.55s; }
+  .layer.active .reveal.d5 { transition-delay: 0.7s; }
+  .layer.active .reveal.d6 { transition-delay: 0.85s; }
+
+  /* preloader */
+  #preloader {
+    position: fixed; inset:0; z-index: 99999;
+    background: #241C16;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    transition: opacity .8s ease, visibility .8s ease;
+  }
+  .film-strip {
+    width: 64px; height: 64px; border-radius: 50%;
+    border: 3px solid rgba(240,198,198,.25);
+    border-top-color: #F0C6C6;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .preload-bar {
+    width: 160px; height: 3px; background: rgba(240,198,198,.15);
+    border-radius: 3px; margin-top: 16px; overflow: hidden;
+  }
+  .preload-bar-inner {
+    height: 100%; background: #F0C6C6; width: 0%;
+    transition: width 0.3s ease; border-radius: 3px;
+  }
+
+  /* blob */
+  .blob-wrap { width: 150px; height: 150px; position: relative; }
+  .blob-body {
+    animation: blobBob 2.6s ease-in-out infinite;
+    filter: drop-shadow(0 10px 14px rgba(74,53,39,.25));
+  }
+  @keyframes blobBob {
+    0%,100% { transform: translateY(0) scaleY(1); }
+    50% { transform: translateY(-10px) scaleY(1.03); }
+  }
+  .blob-arm-left  { transform-origin: 70% 60%; animation: waveArm 1.8s ease-in-out infinite; }
+  @keyframes waveArm {
+    0%,100% { transform: rotate(0deg); }
+    25% { transform: rotate(-22deg); }
+    50% { transform: rotate(4deg); }
+    75% { transform: rotate(-14deg); }
+  }
+  .blob-eye { animation: blink 4.5s infinite; transform-origin: center; }
+  @keyframes blink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(.15); }
+  }
+
+  /* floating hearts */
+  .float-heart {
+    position:absolute; bottom:-40px; color:#F0C6C6; opacity:.85;
+    animation: floatUp linear infinite;
+    pointer-events:none;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0) translateX(0) rotate(0deg); opacity:0; }
+    10% { opacity:.9; }
+    100% { transform: translateY(-115vh) translateX(var(--drift,20px)) rotate(360deg); opacity:0; }
+  }
+
+  /* buttons */
+  .btn-vintage {
+    font-family:'Poppins',sans-serif; font-weight:500;
+    background: linear-gradient(135deg,#7A5C46,#4A3527);
+    color:#FFFBF2; border-radius: 999px;
+    box-shadow: 0 10px 24px rgba(74,53,39,.35);
+    transition: transform .25s ease, box-shadow .25s ease;
+    border: none; cursor: pointer;
+  }
+  .btn-vintage:active { transform: scale(.96); }
+  .btn-vintage:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(74,53,39,.45); }
+
+  /* polaroid */
+  .polaroid {
+    background: #FFFBF2; padding: 10px 10px 36px 10px;
+    border-radius: 6px; box-shadow: 0 14px 28px rgba(36,28,22,.3);
+    transition: transform 0.3s ease;
+  }
+  .polaroid:hover { transform: translateY(-4px) rotate(0deg) !important; }
+  .polaroid img { filter: sepia(.15) contrast(1.02) saturate(1.05); border-radius: 2px; }
+  .img-fallback {
+    display:flex !important; align-items:center !important; justify-content:center !important;
+    background: linear-gradient(135deg,#E7D8BE,#F0C6C6) !important;
+  }
+  .img-fallback::before {
+    content: '\f004'; font-family:'Font Awesome 6 Free'; font-weight:900;
+    font-size: 28px; color:#7A5C46; opacity:.5;
+  }
+
+  /* swiper */
+  .swiper-slide { transition: transform .5s ease, filter .5s ease, opacity .5s ease; }
+  .swiper-slide:not(.swiper-slide-active) { transform: scale(.88); filter: blur(1.5px); opacity:.6; }
+
+  /* memory cards */
+  .flip-card { perspective: 1000px; cursor: pointer; }
+  .flip-inner {
+    position:relative; width:100%; height:100%; transition: transform .55s cubic-bezier(.4,.2,.2,1);
+    transform-style: preserve-3d;
+  }
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+  .flip-face {
+    position:absolute; inset:0; backface-visibility:hidden;
+    border-radius: 10px; display:flex; align-items:center; justify-content:center;
+    overflow:hidden; box-shadow: 0 4px 12px rgba(0,0,0,.1);
+  }
+  .flip-front { background: linear-gradient(135deg,#7A5C46,#4A3527); }
+  .flip-back { transform: rotateY(180deg); background:#FFFBF2; }
+  .flip-card.matched .flip-inner { opacity:.35; }
+
+  /* envelope */
+  .envelope { perspective: 1200px; }
+  .envelope-flap {
+    transform-origin: top center; transition: transform 1s cubic-bezier(.4,.1,.2,1);
+  }
+  .envelope.open .envelope-flap { transform: rotateX(180deg); }
+  .letter-paper {
+    transition: transform 1.1s cubic-bezier(.3,.2,.2,1), opacity .8s ease;
+    transform: translateY(0);
+  }
+
+  /* gift */
+  .gift-lid { transition: transform .8s cubic-bezier(.4,.1,.2,1), opacity .5s ease; transform-origin: bottom center; }
+  .gift-box.open .gift-lid { transform: translateY(-60px) rotate(-18deg); opacity:0; }
+
+  /* locked overlay */
+  .locked-section {
+    filter: blur(8px) brightness(.65);
+    pointer-events: none;
+    user-select: none;
+    transition: filter 0.8s ease, opacity 0.8s ease;
+  }
+  .locked-section.unlocked {
+    filter: blur(0) brightness(1);
+    pointer-events: auto;
+    user-select: auto;
+  }
+
+  /* nav dots */
+  .nav-dots {
+    position: fixed; right: 18px; top: 50%; transform: translateY(-50%);
+    z-index: 9998; display: flex; flex-direction: column; gap: 14px;
+  }
+  .nav-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: rgba(122,92,70,.25); border: 2px solid transparent;
+    transition: all 0.35s ease; cursor: pointer;
+  }
+  .nav-dot.active {
+    background: #7A5C46; border-color: #F0C6C6; transform: scale(1.4);
+  }
+  .nav-dot:disabled { pointer-events: none; opacity: 0.3; }
+
+  /* blackout */
+  #blackout {
+    position: fixed; inset: 0; background: #000; opacity: 0;
+    pointer-events: none; z-index: 9995; transition: opacity 3s ease;
+  }
+
+  /* continue hint */
+  .continue-hint {
+    animation: hintPulse 2s ease-in-out infinite;
+  }
+  @keyframes hintPulse {
+    0%,100% { transform: translateY(0); opacity: 0.8; }
+    50% { transform: translateY(6px); opacity: 1; }
+  }
+
+  /* timeline connector */
+  .timeline-connector::before {
+    content: ''; position: absolute; left: 24px; top: 0; bottom: 0; width: 2px;
+    background: linear-gradient(to bottom, rgba(240,198,198,.4), transparent);
+  }
+</style>
+</head>
+
+<body>
+
+  <!-- ==================== PRELOADER ==================== -->
+  <div id="preloader">
+    <div class="film-strip mb-6"></div>
+    <p class="heading-hand text-3xl text-pink mb-2" style="color:#F0C6C6; font-family:'Caveat',cursive">xotiralar yuklanmoqda...</p>
+    <div class="preload-bar"><div class="preload-bar-inner" id="preloadBar"></div></div>
+    <p id="preloadPct" class="text-white/40 text-xs mt-3 font-body tracking-widest">0%</p>
+  </div>
+
+  <!-- ==================== GLOBAL OVERLAYS ==================== -->
+  <div id="grain"></div>
+  <div id="blackout"></div>
+
+  <!-- audio -->
+  <audio id="bgm" src="https://files.catbox.moe/xwvapo.mp3" preload="auto" loop></audio>
+  <button id="musicToggle" class="hidden fixed bottom-5 right-5 z-[9980] w-12 h-12 rounded-full glass flex items-center justify-center text-softbrown shadow-lg transition-transform active:scale-90">
+    <i class="fa-solid fa-music"></i>
+  </button>
+
+  <!-- nav dots -->
+  <div class="nav-dots" id="navDots">
+    <div class="nav-dot active" data-idx="0" title="Boshlash"></div>
+    <div class="nav-dot" data-idx="1" title="Albom"></div>
+    <div class="nav-dot" data-idx="2" title="Sir"></div>
+    <div class="nav-dot" data-idx="3" title="Tun"></div>
+    <div class="nav-dot" data-idx="4" title="Yakun"></div>
+  </div>
+
+  <!-- ==================== LAYER 0: WELCOME ==================== -->
+  <section id="welcome" class="layer active vignette flex items-center justify-center bg-gradient-to-b from-[#3a2c20] via-[#4A3527] to-[#241C16]">
+    <div id="tsparticles-welcome" class="absolute inset-0 z-0"></div>
+    <div class="light-leak"></div>
+
+    <div class="relative z-10 flex flex-col items-center text-center px-6 max-w-md">
+      <div class="blob-wrap mb-6 reveal d1">
+        <svg class="blob-body" viewBox="0 0 200 200" width="150" height="150">
+          <ellipse cx="100" cy="120" rx="70" ry="60" fill="#FFFBF2" stroke="#EADFC4" stroke-width="3"/>
+          <circle class="blob-eye" cx="80" cy="112" r="6" fill="#4A3527"/>
+          <circle class="blob-eye" cx="120" cy="112" r="6" fill="#4A3527"/>
+          <path d="M85 132 Q100 142 115 132" stroke="#4A3527" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <ellipse cx="65" cy="124" rx="6" ry="4" fill="#F0C6C6" opacity=".8"/>
+          <ellipse cx="135" cy="124" rx="6" ry="4" fill="#F0C6C6" opacity=".8"/>
+          <path class="blob-arm-left" d="M40 120 Q20 110 18 90" stroke="#FFFBF2" stroke-width="10" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <h1 class="heading-serif text-5xl md:text-6xl text-warmwhite mb-3 reveal d2" style="font-family:'Playfair Display',serif">
+        ❤️ Salom...
+      </h1>
+      <p class="heading-hand text-2xl text-pink mb-10 reveal d3" style="color:#F0C6C6; font-family:'Caveat',cursive">
+        Men senga kichkina sovg'a tayyorladim...
+      </p>
+
+      <button id="startBtn" class="btn-vintage px-10 py-4 text-lg reveal d4">
+        🎵 Boshlash
+      </button>
+
+      <p class="text-warmwhite/30 text-xs mt-6 font-body reveal d5">ovoz bilan tomosha qilishni tavsiya qilaman 🎧</p>
+    </div>
+  </section>
+
+  <!-- ==================== LAYER 1: ALBUM ==================== -->
+  <section id="album" class="layer bg-cream flex flex-col items-center justify-center py-12">
+    <div class="light-leak" style="opacity:.35"></div>
+
+    <h2 class="heading-serif text-3xl md:text-4xl text-deepbrown mb-1 text-center px-6 reveal d1" style="font-family:'Playfair Display',serif">
+      📖 Xotiralar Albomi
+    </h2>
+    <p class="heading-hand text-xl text-softbrown mb-8 text-center px-6 reveal d2" style="font-family:'Caveat',cursive">
+      har bir sahifa — bir lahza
+    </p>
+
+    <div class="swiper albumSwiper w-full max-w-5xl px-4 reveal d3" style="padding-bottom:40px;">
+      <div class="swiper-wrapper items-center">
+        <div class="swiper-slide w-56 sm:w-64 md:w-72">
+          <div class="polaroid" style="transform: rotate(-2deg);">
+            <img src="https://files.catbox.moe/95o0m7.jpg" class="w-full h-64 sm:h-72 object-cover bg-beige" alt="xotira 1" referrerpolicy="no-referrer" onerror="handleImgError(this)">
+            <p class="heading-hand text-lg text-center mt-3 text-softbrown" style="font-family:'Caveat',cursive">14 Fevral, 2023</p>
+            <p class="text-center text-xs text-deepbrown/60 mt-1">o'sha kun quyosh ham bizga qarab kulgandek edi</p>
+          </div>
+        </div>
+        <div class="swiper-slide w-56 sm:w-64 md:w-72">
+          <div class="polaroid" style="transform: rotate(1.5deg);">
+            <img src="https://files.catbox.moe/aky6te.jpg" class="w-full h-64 sm:h-72 object-cover bg-beige" alt="xotira 2" referrerpolicy="no-referrer" onerror="handleImgError(this)">
+            <p class="heading-hand text-lg text-center mt-3 text-softbrown" style="font-family:'Caveat',cursive">Yozgi kechqurun</p>
+            <p class="text-center text-xs text-deepbrown/60 mt-1">sen kulganingda vaqt to'xtab qolgandi</p>
+          </div>
+        </div>
+        <div class="swiper-slide w-56 sm:w-64 md:w-72">
+          <div class="polaroid" style="transform: rotate(-1deg);">
+            <img src="https://files.catbox.moe/fomic7.jpg" class="w-full h-64 sm:h-72 object-cover bg-beige" alt="xotira 3" referrerpolicy="no-referrer" onerror="handleImgError(this)">
+            <p class="heading-hand text-lg text-center mt-3 text-softbrown" style="font-family:'Caveat',cursive">Piyoda sayr</p>
+            <p class="text-center text-xs text-deepbrown/60 mt-1">qo'l ushlashganimizni hech qachon unutmayman</p>
+          </div>
+        </div>
+        <div class="swiper-slide w-56 sm:w-64 md:w-72">
+          <div class="polaroid" style="transform: rotate(2deg);">
+            <img src="https://files.catbox.moe/3ez92r.jpg" class="w-full h-64 sm:h-72 object-cover bg-beige" alt="xotira 4" referrerpolicy="no-referrer" onerror="handleImgError(this)">
+            <p class="heading-hand text-lg text-center mt-3 text-softbrown" style="font-family:'Caveat',cursive">Kichkina kafe</p>
+            <p class="text-center text-xs text-deepbrown/60 mt-1">choy sovib qoldi, lekin suhbatimiz sovimadi</p>
+          </div>
+        </div>
+        <div class="swiper-slide w-56 sm:w-64 md:w-72">
+          <div class="polaroid" style="transform: rotate(-1.5deg);">
+            <img src="https://files.catbox.moe/42z5ev.jpg" class="w-full h-64 sm:h-72 object-cover bg-beige" alt="xotira 5" referrerpolicy="no-referrer" onerror="handleImgError(this)">
+            <p class="heading-hand text-lg text-center mt-3 text-softbrown" style="font-family:'Caveat',cursive">Eng sevimli kadr</p>
+            <p class="text-center text-xs text-deepbrown/60 mt-1">bu suratni ming marta ko'rsam ham to'ymayman</p>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+
+    <p class="heading-hand text-2xl text-softbrown text-center mt-4 px-8 max-w-md reveal d4" style="font-family:'Caveat',cursive">
+      "Har bir surat...<br>men uchun kichkina xotira."
+    </p>
+
+    <!-- auto-advance hint -->
+    <div id="albumHint" class="hidden mt-6 reveal d5">
+      <button onclick="goToLayer(2)" class="continue-hint text-softbrown/70 text-sm flex flex-col items-center gap-1 bg-transparent border-none cursor-pointer">
+        <span class="font-body">Davom etish</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+    </div>
+  </section>
+
+  <!-- ==================== LAYER 2: SECRET ==================== -->
+  <section id="secret" class="layer bg-oldpaper flex flex-col items-center justify-center py-10 px-4">
+    <div class="light-leak" style="opacity:.25"></div>
+
+    <div class="text-center mb-6 reveal d1">
+      <p class="text-4xl mb-1">🤫</p>
+      <h2 class="heading-serif text-3xl text-deepbrown" style="font-family:'Playfair Display',serif">Senda kichkina vazifa bor...</h2>
+      <p class="heading-hand text-xl text-softbrown mt-1" style="font-family:'Caveat',cursive">juftlarni top va sirni och ✨</p>
+    </div>
+
+    <!-- MEMORY GAME -->
+    <div class="glass rounded-3xl p-4 sm:p-5 reveal d2">
+      <div id="memoryGrid" class="grid grid-cols-4 gap-2 sm:gap-3" style="width: min(85vw, 400px);"></div>
+    </div>
+
+    <!-- ENVELOPE (locked until game done) -->
+    <div id="envelopeSection" class="locked-section mt-10 flex flex-col items-center transition-all duration-700 reveal d3">
+      <p class="heading-hand text-xl text-softbrown mb-4 text-center" style="font-family:'Caveat',cursive">Sirni ochish uchun konvertni bos</p>
+      <div id="envelope" class="envelope w-60 h-40 relative cursor-pointer">
+        <div class="absolute inset-0 rounded-md" style="background:#E7D8BE; box-shadow:0 16px 30px rgba(36,28,22,.3);"></div>
+        <div class="envelope-flap absolute top-0 left-0 right-0 h-24 z-20" style="background:#D8C4A0; clip-path: polygon(0 0,100% 0,50% 90%); box-shadow: 0 4px 10px rgba(0,0,0,.15);"></div>
+        <div class="absolute inset-0 flex items-center justify-center text-3xl z-10">💌</div>
+      </div>
+    </div>
+
+    <!-- LETTER MODAL -->
+    <div id="letterModal" class="hidden fixed inset-0 z-[9970] bg-filmdark/80 backdrop-blur-sm flex items-center justify-center px-6">
+      <div class="letter-paper relative w-full max-w-md rounded-sm p-8" style="background:#FBF3DE; box-shadow:0 30px 60px rgba(0,0,0,.5); background-image: repeating-linear-gradient(rgba(74,53,39,.04) 0px, transparent 2px);">
+        <button id="closeLetter" class="absolute top-3 right-4 text-softbrown/60 text-xl hover:text-deepbrown transition-colors">✕</button>
+        <p id="letterText" class="heading-hand text-2xl leading-relaxed text-deepbrown" style="font-family:'Caveat',cursive"></p>
+        <div id="letterHint" class="hidden mt-6 text-center">
+          <p class="text-softbrown text-xs mb-2">Davom etish...</p>
+          <div class="w-8 h-1 bg-softbrown/30 rounded-full mx-auto overflow-hidden">
+            <div class="h-full bg-softbrown rounded-full animate-[loadingBar_2s_ease-in-out_forwards]" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== LAYER 3: NIGHT ==================== -->
+  <section id="night" class="layer bg-gradient-to-b from-[#241C16] to-[#0f0b08] flex flex-col items-center justify-center text-center px-6 py-20">
+    <div id="tsparticles-night" class="absolute inset-0 z-0"></div>
+
+    <div class="relative z-10 max-w-xl w-full">
+      <p id="typedNight" class="heading-serif text-2xl md:text-3xl text-warmwhite leading-relaxed min-h-[120px] reveal d1" style="font-family:'Playfair Display',serif"></p>
+
+      <div class="mt-10 reveal d2">
+        <p class="heading-hand text-2xl text-pink mb-6" style="color:#F0C6C6; font-family:'Caveat',cursive">Bizning kichkina sayohatimiz vaqt chizig'i</p>
+        <div class="flex flex-col gap-5 text-left max-w-sm mx-auto relative timeline-connector">
+          <div class="glass-dark rounded-xl p-4 text-warmwhite relative reveal d2">
+            <p class="text-pink text-sm mb-1" style="color:#F0C6C6">01</p>
+            <p class="font-medium text-sm md:text-base">Birinchi tanishuv</p>
+          </div>
+          <div class="glass-dark rounded-xl p-4 text-warmwhite relative reveal d3">
+            <p class="text-pink text-sm mb-1" style="color:#F0C6C6">02</p>
+            <p class="font-medium text-sm md:text-base">Birinchi kulgi, birinchi sukunat</p>
+          </div>
+          <div class="glass-dark rounded-xl p-4 text-warmwhite relative reveal d4">
+            <p class="text-pink text-sm mb-1" style="color:#F0C6C6">03</p>
+            <p class="font-medium text-sm md:text-base">Har kuni yozishgan xabarlar</p>
+          </div>
+          <div class="glass-dark rounded-xl p-4 text-warmwhite relative reveal d5">
+            <p class="text-pink text-sm mb-1" style="color:#F0C6C6">04</p>
+            <p class="font-medium text-sm md:text-base">Bugun — shu kichkina sayt ❤️</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="nightHint" class="hidden mt-10 reveal">
+        <button onclick="goToLayer(4)" class="continue-hint text-warmwhite/60 text-sm flex flex-col items-center gap-1 bg-transparent border-none cursor-pointer">
+          <span class="font-body">Yakunlash</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== LAYER 4: ENDING ==================== -->
+  <section id="ending" class="layer bg-gradient-to-b from-[#F3E9D8] to-[#FFFBF2] flex flex-col items-center justify-center text-center px-6 py-20">
+    <div id="tsparticles-ending" class="absolute inset-0 z-0"></div>
+
+    <div class="relative z-10 flex flex-col items-center max-w-md">
+      <div class="blob-wrap mb-6 reveal d1">
+        <svg class="blob-body" viewBox="0 0 200 200" width="130" height="130">
+          <ellipse cx="100" cy="120" rx="70" ry="60" fill="#FFFBF2" stroke="#E7D8BE" stroke-width="3"/>
+          <circle class="blob-eye" cx="80" cy="112" r="6" fill="#4A3527"/>
+          <circle class="blob-eye" cx="120" cy="112" r="6" fill="#4A3527"/>
+          <path d="M85 132 Q100 142 115 132" stroke="#4A3527" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <text x="100" y="95" font-size="26" text-anchor="middle">🤍</text>
+        </svg>
+      </div>
+
+      <h2 class="heading-serif text-3xl text-deepbrown mb-3 reveal d2" style="font-family:'Playfair Display',serif">Rahmat...</h2>
+      <p class="heading-hand text-xl text-softbrown leading-relaxed mb-1 reveal d3" style="font-family:'Caveat',cursive">
+        Shu kichkina sayohatni oxirigacha ko'rganing uchun.
+      </p>
+      <p class="heading-hand text-xl text-softbrown leading-relaxed mb-1 reveal d4" style="font-family:'Caveat',cursive">
+        Agar bir kun bu saytni yana ochsang...
+      </p>
+      <p class="heading-hand text-xl text-softbrown leading-relaxed mb-8 reveal d5" style="font-family:'Caveat',cursive">
+        umid qilamanki, tabassum qilasan. ❤️
+      </p>
+
+      <button id="giftBtn" class="btn-vintage px-8 py-4 text-lg reveal d6">
+        🤍 Oxirgi sovg'ani och
+      </button>
+
+      <div id="giftBox" class="gift-box hidden mt-8 relative w-40 h-32 reveal">
+        <div class="absolute bottom-0 w-full h-24 rounded-md" style="background:#D98C8C;"></div>
+        <div class="gift-lid absolute top-0 w-full h-10 rounded-md" style="background:#7A5C46;"></div>
+        <div class="absolute inset-x-0 bottom-0 h-24 w-4 mx-auto" style="background:#FFFBF2;"></div>
+      </div>
+
+      <p id="finalNote" class="hidden heading-hand text-2xl text-softbrown mt-6" style="font-family:'Caveat',cursive">
+        "Men bu xotiralarni doim asrayman."
+      </p>
+    </div>
+  </section>
+
+  <!-- ==================== LIBRARIES ==================== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.1.0/dist/typed.umd.js"></script>
+
+  <script>
+  /* ============================================================
+     CONFIG & STATE
+     ============================================================ */
+  const PHOTOS = [
+    "https://files.catbox.moe/95o0m7.jpg",
+    "https://files.catbox.moe/aky6te.jpg",
+    "https://files.catbox.moe/fomic7.jpg",
+    "https://files.catbox.moe/3ez92r.jpg",
+    "https://files.catbox.moe/42z5ev.jpg",
+  ];
+  const LAYERS = ['welcome','album','secret','night','ending'];
+  let currentIdx = 0;
+  let layerInited = {};
+  let albumSwiper = null;
+  let autoAdvanceTimer = null;
+
+  /* ============================================================
+     UTILS
+     ============================================================ */
+  function handleImgError(img) {
+    if (!img.dataset.retried) {
+      img.dataset.retried = '1';
+      const sep = img.src.includes('?') ? '&' : '?';
+      setTimeout(() => { img.src = img.src.split('?')[0] + sep + 'retry=' + Date.now(); }, 400);
+    } else {
+      img.classList.add('img-fallback');
+      img.removeAttribute('src');
+    }
+  }
+
+  function preloadImage(src) {
+    return new Promise((res) => {
+      const img = new Image();
+      img.referrerPolicy = 'no-referrer';
+      img.onload = () => { img.decode().then(res).catch(res); };
+      img.onerror = res;
+      img.src = src;
+    });
+  }
+
+  /* ============================================================
+     LAYER NAVIGATION
+     ============================================================ */
+  function goToLayer(index) {
+    if (index < 0 || index >= LAYERS.length) return;
+    clearTimeout(autoAdvanceTimer);
+
+    // outgoing
+    const outgoing = document.getElementById(LAYERS[currentIdx]);
+    // incoming
+    const incoming = document.getElementById(LAYERS[index]);
+
+    // update dots
+    document.querySelectorAll('.nav-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === index);
+      d.style.opacity = i <= index ? '1' : '0.3';
+    });
+
+    // switch
+    outgoing.classList.remove('active');
+    incoming.classList.add('active');
+    currentIdx = index;
+
+    onLayerEnter(index);
+  }
+
+  function nextLayer() { goToLayer(currentIdx + 1); }
+
+  /* ============================================================
+     PRELOADER
+     ============================================================ */
+  const preloader = document.getElementById('preloader');
+  const preloadBar = document.getElementById('preloadBar');
+  const preloadPct = document.getElementById('preloadPct');
+
+  async function runPreloader() {
+    const tasks = [
+      () => document.fonts.ready,
+      ...PHOTOS.map(src => () => preloadImage(src)),
+      () => new Promise(res => {
+        const check = () => {
+          if (window.gsap && window.Swiper && window.tsParticles && window.Typed && window.Swal) res();
+          else setTimeout(check, 60);
+        };
+        check();
+      }),
+    ];
+
+    let done = 0;
+    const total = tasks.length;
+
+    await Promise.all(tasks.map(fn => 
+      Promise.resolve().then(fn).catch(() => null).finally(() => {
+        done++;
+        const p = Math.round((done/total)*100);
+        preloadBar.style.width = p + '%';
+        preloadPct.textContent = p + '%';
+      })
+    ));
+
+    // build memory grid behind the scenes
+    buildMemoryGrid();
+
+    // small buffer for visual comfort
+    setTimeout(() => {
+      preloader.style.opacity = '0';
+      preloader.style.visibility = 'hidden';
+      onLayerEnter(0);
+      initAmbientHearts();
+    }, 400);
+  }
+
+  /* ============================================================
+     LAYER INITIALIZERS
+     ============================================================ */
+  function onLayerEnter(idx) {
+    if (layerInited[idx]) return;
+    layerInited[idx] = true;
+
+    switch(idx) {
+      case 0:
+        initParticlesWelcome();
+        break;
+      case 1:
+        initAlbumSwiper();
+        // show continue hint after 12s, auto-advance after 28s
+        setTimeout(() => document.getElementById('albumHint')?.classList.remove('hidden'), 12000);
+        autoAdvanceTimer = setTimeout(() => {
+          if (currentIdx === 1) nextLayer();
+        }, 28000);
+        break;
+      case 2:
+        // game already built
+        break;
+      case 3:
+        initParticlesNight();
+        break;
+      case 4:
+        initParticlesEnding();
+        break;
+    }
+  }
+
+  /* ============================================================
+     WELCOME
+     ============================================================ */
+  document.getElementById('startBtn').addEventListener('click', () => {
+    const bgm = document.getElementById('bgm');
+    bgm.volume = 0.55;
+    bgm.play().catch(()=>{});
+
+    document.getElementById('musicToggle').classList.remove('hidden');
+
+    const blob = document.querySelector('#welcome .blob-body');
+    gsap.to(blob, { y: -40, duration: .25, yoyo: true, repeat: 3, ease: 'power1.inOut' });
+
+    setTimeout(() => nextLayer(), 900);
+  });
+
+  document.getElementById('musicToggle').addEventListener('click', () => {
+    const bgm = document.getElementById('bgm');
+    if (bgm.paused) { bgm.play(); } else { bgm.pause(); }
+  });
+
+  function initAmbientHearts() {
+    const container = document.getElementById('welcome');
+    setInterval(() => {
+      const heart = document.createElement('i');
+      heart.className = 'fa-solid fa-heart float-heart';
+      heart.style.left = Math.random()*100 + '%';
+      heart.style.fontSize = (10 + Math.random()*14) + 'px';
+      heart.style.setProperty('--drift', (Math.random()*60-30) + 'px');
+      heart.style.animationDuration = (6 + Math.random()*5) + 's';
+      container.appendChild(heart);
+      setTimeout(() => heart.remove(), 11000);
+    }, 900);
+  }
+
+  /* ============================================================
+     PARTICLES
+     ============================================================ */
+  function initParticlesWelcome() {
+    tsParticles.load("tsparticles-welcome", {
+      fpsLimit: 60,
+      particles: {
+        number: { value: 40 },
+        color: { value: ["#F0C6C6", "#EADFC4", "#FFFBF2"] },
+        shape: { type: "circle" },
+        opacity: { value: { min: .1, max: .5 }, animation: { enable: true, speed: .4 } },
+        size: { value: { min: 1, max: 3 } },
+        move: { enable: true, speed: .4, direction: "top", random: true, outModes: { default: "out" } },
+      },
+      detectRetina: true,
+    });
+  }
+
+  function initParticlesNight() {
+    tsParticles.load("tsparticles-night", {
+      fpsLimit: 60,
+      particles: {
+        number: { value: 100 },
+        color: { value: "#FFF5DC" },
+        shape: { type: "circle" },
+        opacity: { value: { min: .2, max: 1 }, animation: { enable: true, speed: .5, sync: false } },
+        size: { value: { min: .5, max: 2.5 } },
+        move: { enable: true, speed: .12, random: true },
+      },
+      detectRetina: true,
+    });
+  }
+
+  function initParticlesEnding() {
+    tsParticles.load("tsparticles-ending", {
+      fpsLimit: 60,
+      particles: {
+        number: { value: 30 },
+        color: { value: ["#F0C6C6", "#E7D8BE"] },
+        shape: { type: "circle" },
+        opacity: { value: { min: .3, max: .7 } },
+        size: { value: { min: 3, max: 8 } },
+        move: { enable: true, speed: .6, direction: "bottom", straight: false, outModes: { default: "out" } },
+      },
+      detectRetina: true,
+    });
+  }
+
+  /* ============================================================
+     ALBUM SWIPER
+     ============================================================ */
+  function initAlbumSwiper() {
+    if (albumSwiper) return;
+    albumSwiper = new Swiper(".albumSwiper", {
+      effect: "coverflow",
+      grabCursor: true,
+      centeredSlides: true,
+      slidesPerView: "auto",
+      loop: true,
+      observer: true,
+      observeParents: true,
+      coverflowEffect: { rotate: 8, stretch: 0, depth: 90, modifier: 1.4, slideShadows: false },
+      pagination: { el: ".swiper-pagination", clickable: true },
+      autoplay: { delay: 3500, disableOnInteraction: false },
+    });
+  }
+
+  /* ============================================================
+     MEMORY GAME
+     ============================================================ */
+  function buildMemoryGrid() {
+    const heartPairs = ["fa-heart", "fa-heart-crack", "fa-heart-circle-check"];
+    let deckSources = [...PHOTOS, ...heartPairs];
+    let deck = [...deckSources, ...deckSources]
+      .map(v => ({ v, sort: Math.random() }))
+      .sort((a,b) => a.sort - b.sort)
+      .map(o => o.v);
+
+    const grid = document.getElementById('memoryGrid');
+    let first = null, second = null, lock = false, matches = 0;
+
+    deck.forEach((val) => {
+      const card = document.createElement('div');
+      card.className = 'flip-card aspect-square';
+      card.dataset.value = val;
+
+      const isPhoto = PHOTOS.includes(val);
+      card.innerHTML = `
+        <div class="flip-inner w-full h-full">
+          <div class="flip-face flip-front"><i class="fa-solid fa-heart text-warmwhite text-lg"></i></div>
+          <div class="flip-face flip-back">
+            ${isPhoto
+              ? `<img src="${val}" class="w-full h-full object-cover rounded-[10px] bg-beige" referrerpolicy="no-referrer" onerror="handleImgError(this)">`
+              : `<i class="fa-solid ${val} text-2xl" style="color:#D98C8C"></i>`}
+          </div>
+        </div>`;
+
+      card.addEventListener('click', () => {
+        if (lock || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+        card.classList.add('flipped');
+        playFlipSound();
+
+        if (!first) { first = card; return; }
+        second = card;
+        lock = true;
+
+        if (first.dataset.value === second.dataset.value) {
+          first.classList.add('matched'); second.classList.add('matched');
+          matches++;
+          resetTurn();
+          if (matches === deckSources.length) setTimeout(onGameComplete, 500);
+        } else {
+          setTimeout(() => {
+            first.classList.remove('flipped');
+            second.classList.remove('flipped');
+            resetTurn();
+          }, 750);
+        }
+      });
+
+      grid.appendChild(card);
+    });
+
+    function resetTurn() { first = null; second = null; lock = false; }
+  }
+
+  function playFlipSound() {
+    try {
+      const ctx = playFlipSound.ctx || (playFlipSound.ctx = new (window.AudioContext||window.webkitAudioContext)());
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = 520;
+      g.gain.setValueAtTime(0.05, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + .15);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(); o.stop(ctx.currentTime + .15);
+    } catch(e) {}
+  }
+
+  function onGameComplete() {
+    launchHeartBurst(50);
+    Swal.fire({
+      title: '🎉 Tabriklayman!',
+      html: '<span style="font-family:Caveat,cursive; font-size:22px;">Senda kuchli xotira bor ekan ❤️</span>',
+      confirmButtonText: 'Davom etish',
+      confirmButtonColor: '#7A5C46',
+      background: '#FBF3DE',
+      color: '#4A3527',
+      allowOutsideClick: false,
+    }).then(() => {
+      const envSec = document.getElementById('envelopeSection');
+      envSec.classList.remove('locked-section');
+      envSec.classList.add('unlocked');
+      // auto-scroll inside layer to envelope if needed (smooth)
+      envSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+
+  function launchHeartBurst(count) {
+    for (let i=0; i<count; i++) {
+      const h = document.createElement('i');
+      h.className = 'fa-solid fa-heart';
+      h.style.cssText = `position:fixed; z-index:9998; left:${Math.random()*100}vw; top:-30px;
+        color:${Math.random()>.5?'#F0C6C6':'#7A5C46'}; font-size:${10+Math.random()*20}px; pointer-events:none;`;
+      document.body.appendChild(h);
+      gsap.to(h, {
+        y: window.innerHeight + 60, x: (Math.random()*200-100), rotation: Math.random()*360,
+        duration: 2.5 + Math.random()*2, ease: 'power1.in',
+        onComplete: () => h.remove()
+      });
+    }
+  }
+
+  /* ============================================================
+     ENVELOPE & LETTER
+     ============================================================ */
+  const LETTER_TEXT = `Sevgilim...
+
+Agar sen buni o'qiyotgan bo'lsang, demak sen mening kichkina xotiralar dunyomga kirib kelding.
+
+Har bir surat, har bir kulgi, har bir sukunat — ularning barchasi men uchun qadrli.
+
+Rahmat, yonimda bo'lganing uchun. ❤️`;
+
+  document.getElementById('envelope').addEventListener('click', function () {
+    this.classList.add('open');
+    setTimeout(openLetterModal, 700);
+  });
+
+  document.getElementById('closeLetter').addEventListener('click', closeLetterModal);
+
+  function openLetterModal() {
+    const modal = document.getElementById('letterModal');
+    const textEl = document.getElementById('letterText');
+    textEl.textContent = '';
+    modal.classList.remove('hidden');
+
+    let i = 0;
+    function typeChar() {
+      if (i < LETTER_TEXT.length) {
+        textEl.textContent += LETTER_TEXT[i];
+        i++;
+        setTimeout(typeChar, 30);
+      } else {
+        // show auto-advance hint
+        setTimeout(() => {
+          document.getElementById('letterHint').classList.remove('hidden');
+          setTimeout(closeLetterModal, 2200);
+        }, 800);
+      }
+    }
+    typeChar();
+  }
+
+  function closeLetterModal() {
+    document.getElementById('letterModal').classList.add('hidden');
+    // auto advance to night after reading
+    setTimeout(() => {
+      if (currentIdx === 2) nextLayer();
+    }, 600);
+  }
+
+  /* ============================================================
+     NIGHT TYPED.JS
+     ============================================================ */
+  let nightTypedStarted = false;
+  function startNightTyped() {
+    if (nightTypedStarted) return;
+    nightTypedStarted = true;
+
+    new Typed('#typedNight', {
+      strings: [
+        "Bilasanmi...^600 Ba'zan oddiy surat...^400 minglab so'zlardan ham qadrliroq bo'ladi.^700 Chunki...^400 Har bir surat bir xotirani saqlaydi.^500 Har bir xotira bir tuyg'uni saqlaydi. ❤️"
+      ],
+      typeSpeed: 32,
+      showCursor: true,
+      cursorChar: '|',
+      onComplete: () => {
+        setTimeout(() => {
+          document.getElementById('nightHint')?.classList.remove('hidden');
+        }, 500);
+        autoAdvanceTimer = setTimeout(() => {
+          if (currentIdx === 3) nextLayer();
+        }, 8000);
+      }
+    });
+  }
+
+  /* ============================================================
+     ENDING GIFT
+     ============================================================ */
+  document.getElementById('giftBtn').addEventListener('click', () => {
+    const box = document.getElementById('giftBox');
+    box.classList.remove('hidden');
+    requestAnimationFrame(() => box.classList.add('open'));
+
+    setTimeout(() => {
+      document.getElementById('finalNote').classList.remove('hidden');
+      launchHeartBurst(120);
+    }, 600);
+
+    setTimeout(() => {
+      const bo = document.getElementById('blackout');
+      bo.style.pointerEvents = 'auto';
+      bo.style.opacity = '1';
+      const bgm = document.getElementById('bgm');
+      const fade = setInterval(() => {
+        if (bgm.volume > 0.03) { bgm.volume -= 0.03; } else { bgm.pause(); clearInterval(fade); }
+      }, 200);
+    }, 4500);
+  });
+
+  /* ============================================================
+     NAV DOTS
+     ============================================================ */
+  document.querySelectorAll('.nav-dot').forEach(dot => {
+    dot.addEventListener('click', () => {
+      const idx = parseInt(dot.dataset.idx);
+      // only allow going to visited or next layer
+      if (idx <= currentIdx + 1) goToLayer(idx);
+    });
+  });
+
+  /* ============================================================
+     KEYBOARD NAV
+     ============================================================ */
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      // block if modal open or swal open
+      if (document.querySelector('.swal2-container') || !document.getElementById('letterModal').classList.contains('hidden')) return;
+      if (currentIdx === 2 && document.getElementById('envelopeSection').classList.contains('locked-section')) return;
+      nextLayer();
+    }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      if (document.querySelector('.swal2-container') || !document.getElementById('letterModal').classList.contains('hidden')) return;
+      goToLayer(currentIdx - 1);
+    }
+  });
+
+  /* ============================================================
+     BOOT
+     ============================================================ */
+  runPreloader();
+  </script>
+</body>
+</html>
 
